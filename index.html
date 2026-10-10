@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud AI Assistant</title>
+    <!-- Puter SDK runs flawlessly when hosted on a real secure domain -->
+    <script src="https://puter.com"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f0f16; color: #cdd6f4; margin: 0; padding: 20px; display: flex; flex-direction: column; height: 92vh; }
+        #chatbox { flex: 1; border: 1px solid #2a2b3d; border-radius: 16px; padding: 20px; overflow-y: auto; background: #161622; margin-bottom: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+        .msg { margin: 12px 0; padding: 14px 18px; border-radius: 12px; line-height: 1.6; max-width: 75%; font-size: 15px; }
+        .user { background: #585b70; color: #ffffff; margin-left: auto; text-align: left; }
+        .ai { background: #1e1e2e; color: #cdd6f4; margin-right: auto; border: 1px solid #2a2b3d; }
+        .input-area { display: flex; gap: 12px; }
+        input { flex: 1; padding: 16px; border-radius: 12px; border: 1px solid #2a2b3d; background: #1e1e2e; color: #cdd6f4; font-size: 16px; outline: none; }
+        input:focus { border-color: #b4befe; }
+        button { background: #b4befe; color: #11111b; border: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; transition: all 0.2s; }
+        button:hover { background: #cba6f7; transform: translateY(-1px); }
+    </style>
+</head>
+<body>
+    <h2 style="color: #b4befe; margin-top: 0; font-weight: 600;">Cloud AI Assistant</h2>
+    <div id="chatbox">
+        <div id="status" class="msg ai"><b>AI:</b> Initializing secure cloud handshake...</div>
+    </div>
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="Ask me anything..." onkeypress="if(event.key === 'Enter') sendPrompt()" disabled>
+        <button id="sendBtn" onclick="sendPrompt()" disabled>Send</button>
+    </div>
+
+    <script>
+        // Wait for secure script verification
+        window.addEventListener('load', () => {
+            if (typeof puter !== 'undefined') {
+                document.getElementById('status').innerHTML = `<b>AI:</b> Secure online connection established! How can I help you today?`;
+                document.getElementById('userInput').disabled = false;
+                document.getElementById('sendBtn').disabled = false;
+            } else {
+                document.getElementById('status').innerHTML = `<b>AI Error:</b> Secure network handshake failed.`;
+            }
+        });
+
+        async function sendPrompt() {
+            const input = document.getElementById('userInput');
+            const box = document.getElementById('chatbox');
+            const text = input.value.trim();
+            if (!text) return;
+
+            box.innerHTML += `<div class="msg user"><b>You:</b> ${text}</div>`;
+            input.value = '';
+            box.scrollTop = box.scrollHeight;
+
+            const aiMsgDiv = document.createElement('div');
+            aiMsgDiv.className = 'msg ai';
+            aiMsgDiv.innerHTML = `<b>AI:</b> Processing...`;
+            box.appendChild(aiMsgDiv);
+            box.scrollTop = box.scrollHeight;
+
+            try {
+                // Generates unrestricted, high-quality responses via trusted web platform execution
+                const response = await puter.ai.chat(text);
+                aiMsgDiv.innerHTML = `<b>AI:</b> ${response}`;
+            } catch (err) {
+                aiMsgDiv.innerHTML = `<b>AI Error:</b> Secure line lost: ${err.message}`;
+            }
+            box.scrollTop = box.scrollHeight;
+        }
+    </script>
+</body>
+</html>
