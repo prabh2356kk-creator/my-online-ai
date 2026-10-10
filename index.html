@@ -5,50 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cloud AI Assistant</title>
     <style>
-        /* Modern high-performance dark application layout */
-        body, html { 
-            margin: 0; 
-            padding: 0; 
-            height: 100%; 
-            width: 100%;
-            overflow: hidden; 
-            background: #11111b;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            width: 100vw;
-        }
-        .header {
-            background: #1e1e2e;
-            color: #b4befe;
-            padding: 15px 20px;
-            font-size: 18px;
-            font-weight: 600;
-            border-bottom: 1px solid #2a2b3d;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        /* Directly integrates the official free unblocked portal window */
-        iframe { 
-            border: none; 
-            flex: 1;
-            width: 100%; 
-            height: 100%; 
-            background: #1e1e2e;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f0f16; color: #cdd6f4; margin: 0; padding: 20px; display: flex; flex-direction: column; height: 92vh; }
+        #chatbox { flex: 1; border: 1px solid #2a2b3d; border-radius: 16px; padding: 20px; overflow-y: auto; background: #161622; margin-bottom: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+        .msg { margin: 12px 0; padding: 14px 18px; border-radius: 12px; line-height: 1.6; max-width: 75%; font-size: 15px; }
+        .user { background: #585b70; color: #ffffff; margin-left: auto; text-align: left; }
+        .ai { background: #1e1e2e; color: #cdd6f4; margin-right: auto; border: 1px solid #2a2b3d; }
+        .input-area { display: flex; gap: 12px; }
+        input { flex: 1; padding: 16px; border-radius: 12px; border: 1px solid #2a2b3d; background: #1e1e2e; color: #cdd6f4; font-size: 16px; outline: none; }
+        input:focus { border-color: #b4befe; }
+        button { background: #b4befe; color: #11111b; border: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; transition: all 0.2s; }
+        button:hover { background: #cba6f7; transform: translateY(-1px); }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">Cloud AI Assistant (Unrestricted)</div>
-        <!-- Secure sandboxed execution layer to completely bypass timeout faults -->
-        <iframe 
-            src="https://duckduckgo.com" 
-            allow="clipboard-write"
-            sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts">
-        </iframe>
+    <h2 style="color: #b4befe; margin-top: 0; font-weight: 600;">Cloud AI Assistant</h2>
+    <div id="chatbox">
+        <div class="msg ai"><b>AI:</b> System connection clear. Type your prompt below to communicate with the online engine.</div>
     </div>
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="Ask me anything..." onkeypress="if(event.key === 'Enter') sendPrompt()">
+        <button id="sendBtn" onclick="sendPrompt()">Send</button>
+    </div>
+
+    <script>
+        async function sendPrompt() {
+            const input = document.getElementById('userInput');
+            const box = document.getElementById('chatbox');
+            const text = input.value.trim();
+            if (!text) return;
+
+            // 1. Instantly display user input
+            box.innerHTML += `<div class="msg user"><b>You:</b> ${text}</div>`;
+            input.value = '';
+            box.scrollTop = box.scrollHeight;
+
+            // 2. Add waiting indicator
+            const aiMsgDiv = document.createElement('div');
+            aiMsgDiv.className = 'msg ai';
+            aiMsgDiv.innerHTML = `<b>AI:</b> Typing...`;
+            box.appendChild(aiMsgDiv);
+            box.scrollTop = box.scrollHeight;
+
+            try {
+                // 3. Requesting an open public AI processing gateway
+                const response = await fetch('https://simsimi.vn', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `text=${encodeURIComponent(text)}&lc=en`
+                });
+                
+                const data = await response.json();
+                
+                // Render the processing text response safely onto your screen layout
+                if (data && data.response) {
+                    aiMsgDiv.innerHTML = `<b>AI:</b> ${data.response}`;
+                } else {
+                    aiMsgDiv.innerHTML = `<b>AI:</b> I have processed your request, but the data stream was empty. Please try another prompt.`;
+                }
+            } catch (err) {
+                aiMsgDiv.innerHTML = `<b>AI Error:</b> Cloud network route busy. Please try sending your message again.`;
+            }
+            box.scrollTop = box.scrollHeight;
+        }
+    </script>
 </body>
 </html>
+
